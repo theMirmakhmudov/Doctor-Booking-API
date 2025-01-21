@@ -6,6 +6,12 @@ from django.db import models
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    ROLE_CHOICES = [
+        ('user', 'User'),
+        ('admin', 'Admin'),
+        ('manager', 'Manager'),
+        ('doctor', 'Doctor')
+    ]
     email = models.EmailField(_('email address'), unique=True)
     username = models.CharField(_("username"), max_length=150, unique=True, )
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
@@ -13,7 +19,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('staff'), default=True)
-
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="user")
+    avatar = models.ImageField(upload_to='avatars/', null=False, blank=True)
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
