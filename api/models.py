@@ -19,8 +19,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('staff'), default=True)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="user")
-    avatar = models.ImageField(upload_to='avatars/', null=False, blank=True)
+    role = models.CharField(_("role"), max_length=10, choices=ROLE_CHOICES, default="user")
+    avatar = models.ImageField(_("avatar"), upload_to='avatars/', null=False, blank=True)
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -48,3 +48,37 @@ class User(AbstractBaseUser, PermissionsMixin):
         Sends an email to this User.
         '''
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class Doctor(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    specialization = models.CharField(_("specialization"), max_length=100)
+    experience = models.PositiveIntegerField(_("experience"), default=0)
+    location = models.CharField(_("location"), max_length=150)
+    clinic_name = models.CharField(_("clinic name"), max_length=150)
+    consultation_fee = models.DecimalField(_("consultation fee"), decimal_places=2, max_digits=10, default=0)
+    is_consultation_free = models.BooleanField(_("is_consultation_free"), default=False)
+    availability_today = models.BooleanField(_("availability today"), default=False)
+    rating_percentage = models.PositiveIntegerField(_("rating percentage"), default=0)
+    patient_stories = models.PositiveIntegerField(_('patient stories'), default=0)
+
+    def __str__(self):
+        return self.specialization
+
+    class Meta:
+        verbose_name = _('doctor')
+        verbose_name_plural = _('doctors')
+
+
+class News(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(_("title"), max_length=150)
+    image = models.ImageField(_("image"), upload_to="news/")
+    created_at = models.DateField(_("created_at"), auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _('news')
+        verbose_name_plural = _('news')
