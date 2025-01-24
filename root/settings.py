@@ -1,8 +1,8 @@
 from pathlib import Path
 import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -15,10 +15,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
+    'drf_spectacular',
     'api'
 ]
 
@@ -63,7 +64,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'root.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -97,7 +97,16 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Doctor Booking API',
+    'DESCRIPTION': 'Medical Booking API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
 }
 
 # Internationalization
@@ -110,7 +119,8 @@ LANGUAGES = [
     ('es', 'Spanish'),
     ('fr', 'French'),
     ('hi', 'Hindi'),
-    ('uz', "Uzbek")
+    ('uz', "Uzbek"),
+    ('ru', 'Russian')
 ]
 
 TIME_ZONE = 'Asia/Tashkent'
@@ -118,7 +128,6 @@ TIME_ZONE = 'Asia/Tashkent'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -136,3 +145,80 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 BASE_URL = 'http://127.0.0.1:8000'
+
+JAZZMIN_SETTINGS = {
+
+    "site_title": "Library Admin",
+
+    "site_header": "Admin",
+
+    "site_brand": "All Hp",
+
+    "site_logo": "../media/logo/Mirmakhmudov_coder.jpg",
+
+    "welcome_sign": "Salom Admin pagega xo'sh kelibsiz",
+
+    "search_model": ["auth.User", "apps.Product"],
+
+    # applarni yashirish uchun
+    "hide_apps": [],
+
+    # bazi modellarni yashirish uchun
+    "hide_models": ['auth.User', 'auth.Group'],
+
+    # tepa menu da home va userlar ni chiqarish uchun
+    "topmenu_links": [
+        # Url that gets reversed (Permissions
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},
+    ],
+    # user iconka sin chiqarish uchun
+    "usermenu_links": [
+        {"name": "Support", "url": "https://github.com/theMirmakhmudov", "new_window": True},
+        # {"model": "auth.user"},
+    ],
+    "copyright": "Mr.Mirmakhmudov",
+    "language_chooser": True,
+    "show_ui_builder": True,
+    # "language_chooser": True,
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fa fa-layer-group",
+    'icons': {
+        'apps.Product': 'fa fa-filter',  # Post modeliga ikona qo'shish
+        'apps.Images': 'fa fa-image',  # Images Modeliga ikonga qo'shish
+        'auth.user': 'fas fa-user',  # User modeliga ikona qo'shish
+        'auth.group': 'fas fa-users',  # Group modeliga ikona qo'shish
+    },
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": True,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": False,
+    "accent": "accent-primary",
+    "navbar": "navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": False,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": True,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "darkly",
+    "dark_mode_theme": "cyborg",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}
