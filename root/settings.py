@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-%f!e9+o3a62&6%(x08x(a185knu8mdl9=wq#h+u_i2-^tkn=yw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -148,13 +148,13 @@ BASE_URL = 'http://127.0.0.1:8000'
 
 JAZZMIN_SETTINGS = {
 
-    "site_title": "Library Admin",
+    "site_title": "Welcome to Medical Booking API",
 
     "site_header": "Admin",
 
-    "site_brand": "All Hp",
+    "site_brand": "Multicode",
 
-    "site_logo": "../media/logo/Mirmakhmudov_coder.jpg",
+    "site_logo": "../media/avatars/MrMirmakhmudov.jpg",
 
     "welcome_sign": "Salom Admin pagega xo'sh kelibsiz",
 
@@ -164,7 +164,7 @@ JAZZMIN_SETTINGS = {
     "hide_apps": [],
 
     # bazi modellarni yashirish uchun
-    "hide_models": ['auth.User', 'auth.Group'],
+    "hide_models": ['auth.Group'],
 
     # tepa menu da home va userlar ni chiqarish uchun
     "topmenu_links": [
@@ -184,10 +184,10 @@ JAZZMIN_SETTINGS = {
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fa fa-layer-group",
     'icons': {
-        'apps.Product': 'fa fa-filter',  # Post modeliga ikona qo'shish
-        'apps.Images': 'fa fa-image',  # Images Modeliga ikonga qo'shish
-        'auth.user': 'fas fa-user',  # User modeliga ikona qo'shish
-        'auth.group': 'fas fa-users',  # Group modeliga ikona qo'shish
+        'api.Doctor': 'fa fa-user-doctor',  # Doctor modeliga ikona qo'shish
+        'api.News': 'fa fa-envelope',  # Images Modeliga ikonga qo'shish
+        'api.user': 'fas fa-user',  # User modeliga ikona qo'shish
+        'api.group': 'fas fa-users',  # Group modeliga ikona qo'shish
     },
 }
 
