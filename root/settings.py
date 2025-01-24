@@ -190,7 +190,7 @@ JAZZMIN_SETTINGS = {
         'api.group': 'fas fa-users',  # Group modeliga ikona qo'shish
     },
 }
-
+aa
 
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": False,
