@@ -1,15 +1,19 @@
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from api.models import Doctor, News
-from api.serializers import DoctorSerializer, NewsSerializer
+from api.serializers import DoctorSerializer, NewsSerializer, RegisterSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.hashers import make_password, check_password
 
 
 class DoctorAPIView(APIView):
+    throttle_classes = (AnonRateThrottle, UserRateThrottle)
+
     def get(self, request, pk=None):
         if pk:
             try:
@@ -33,6 +37,8 @@ class DoctorSearchList(generics.ListAPIView):
 
 
 class NewsAPIView(APIView):
+    throttle_classes = (AnonRateThrottle, UserRateThrottle)
+
     def get(self, request, pk=None):
         if pk:
             try:
@@ -45,3 +51,22 @@ class NewsAPIView(APIView):
             news = News.objects.all()
             serializer = NewsSerializer(news, many=True)
             return Response(serializer.data)
+
+
+class RegisterAPIView(APIView):
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save(password=make_password(serializer.validated_data['password']))
+            # Generate JWT token
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
+            return Response(
+                {
+                    "refresh": str(refresh),
+                    "access": access_token,
+                    "user": serializer.data
+                }, status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

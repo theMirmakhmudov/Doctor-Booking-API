@@ -1,5 +1,8 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,8 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%f!e9+o3a62&6%(x08x(a185knu8mdl9=wq#h+u_i2-^tkn=yw'
-
+SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -28,6 +30,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'drf_spectacular',
+
     'api'
 ]
 
@@ -70,11 +73,11 @@ WSGI_APPLICATION = 'root.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "doctor_api",
-        "USER": "postgres",
-        "PASSWORD": "mirmakhmudov16",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASS"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
     }
 }
 
@@ -99,6 +102,14 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '5/minute',  # Ro'yhatdan o'tmaganlar uchun 5 ta # noqa
+        'user': '10/minute'  # Ro'yhatdan o'tganlar uchun 10 ta # noqa
+    }
 }
 
 SPECTACULAR_SETTINGS = {
@@ -190,7 +201,6 @@ JAZZMIN_SETTINGS = {
         'api.group': 'fas fa-users',  # Group modeliga ikona qo'shish
     },
 }
-
 
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": False,
