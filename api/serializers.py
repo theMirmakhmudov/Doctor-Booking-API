@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Doctor, User, News
-from root import settings
+# from root import settings
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,15 +8,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password', 'role', 'first_name', 'last_name']
 
 class UserSerializer(serializers.ModelSerializer):
-    avatar = serializers.SerializerMethodField()
+    # avatar = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'avatar']
 
-    def get_avatar(self, obj):
-        if obj.avatar:
-            return settings.BASE_URL + obj.avatar.url
-        return None
+    # def get_avatar(self, obj):
+    #     if obj.avatar:
+    #         return settings.BASE_URL + obj.avatar.url
+    #     return None
 
 
 class DoctorSerializer(serializers.ModelSerializer):
@@ -31,12 +31,12 @@ class DoctorSerializer(serializers.ModelSerializer):
 
 class NewsSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    image = serializers.SerializerMethodField()
+    # image = serializers.SerializerMethodField()
     class Meta:
         model = News
         fields = ['user', 'user', 'title', 'image', 'created_at']
 
-    def get_image(self, obj):
-        if obj.image:
-            return settings.BASE_URL + obj.image.url
-        return None
+    # def get_image(self, obj):
+    #     if obj.image:
+    #         return settings.BASE_URL + obj.image.url
+    #     return None
