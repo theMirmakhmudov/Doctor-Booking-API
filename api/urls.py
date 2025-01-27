@@ -1,8 +1,9 @@
 from django.urls import path
-from api.views import DoctorAPIView, NewsAPIView, DoctorSearchList, RegisterAPIView
+from api.views import DoctorAPIView, NewsAPIView, DoctorSearchList, RegisterAPIView, LoginAPIView
 
 urlpatterns = [
     path('register', RegisterAPIView.as_view(), name='register'),  # for JWT token generation
+    path('login', LoginAPIView.as_view(), name='login'),
     path('doctor', DoctorAPIView.as_view(), name='doctors-list'),
     path('doctor/<int:pk>', DoctorAPIView.as_view(), name='doctors-detail'),
     path('search', DoctorSearchList.as_view(), name='search'),

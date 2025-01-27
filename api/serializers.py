@@ -7,6 +7,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email', 'password', 'role', 'first_name', 'last_name']
 
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+
 class UserSerializer(serializers.ModelSerializer):
     # avatar = serializers.SerializerMethodField()
     class Meta:
@@ -24,10 +29,6 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ['user','specialization','experience','location','clinic_name','consultation_fee','is_consultation_free','availability_today']
-
-
-
-
 
 class NewsSerializer(serializers.ModelSerializer):
     user = UserSerializer()
