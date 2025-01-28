@@ -110,10 +110,11 @@ REST_FRAMEWORK = {
         'anon': '5/minute',  # Ro'yhatdan o'tmaganlar uchun 5 ta # noqa
         'user': '10/minute'  # Ro'yhatdan o'tganlar uchun 10 ta # noqa
     },
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ]
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
+
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Doctor Booking API',
