@@ -1,4 +1,4 @@
-from django.test import TestCase
+from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from api.models import Doctor, News
@@ -8,7 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class DoctorModelTest(TestCase):
+class DoctorModelTest(APITestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             email="doctor@example.com",
@@ -68,7 +68,7 @@ class DoctorModelTest(TestCase):
         self.assertEqual(response.data['availability_today'], True)
         logger.info("\nTest 3 (Doctors-details) ✅\n")
 
-class NewsModelTestCase(TestCase):
+class NewsModelTestCase(APITestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             email="news@example.com",
