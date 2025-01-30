@@ -9,7 +9,9 @@ from rest_framework import status
 from rest_framework import generics
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import make_password, check_password
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+
 
 class RegisterAPIView(APIView):
     def post(self, request):
@@ -28,7 +30,18 @@ class RegisterAPIView(APIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class LoginAPIView(APIView):
+    @extend_schema(
+        summary="User Login",
+        description="Login user with email and password",
+        request=LoginSerializer,
+        responses={
+            200: OpenApiParameter(name="Tokens", description="JWT access token and refresh tokens"),
+            400: OpenApiParameter(name="Errors", description="Invalid credentials")
+        },
+        tags=["User Authentication"]
+    )
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -52,7 +65,6 @@ class LoginAPIView(APIView):
 class DoctorAPIView(APIView):
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
     permission_classes = [IsAuthenticated]
-
 
     def get(self, request, pk=None):
         if pk:
@@ -91,6 +103,3 @@ class NewsAPIView(APIView):
             news = News.objects.all()
             serializer = NewsSerializer(news, many=True)
             return Response(serializer.data)
-
-
-
