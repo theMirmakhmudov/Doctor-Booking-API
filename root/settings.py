@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'drf_spectacular',
+    'drf_spectacular_sidecar',
 
     'api'
 ]
@@ -107,16 +108,18 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle',
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',),
+
     'DEFAULT_THROTTLE_RATES': {
         'anon': '5/minute',  # Ro'yhatdan o'tmaganlar uchun 5 ta # noqa
         'user': '10/minute'  # Ro'yhatdan o'tganlar uchun 10 ta # noqa
     },
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',),
 
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
+
 }
 
 SPECTACULAR_SETTINGS = {

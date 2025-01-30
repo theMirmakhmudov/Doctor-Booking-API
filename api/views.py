@@ -14,6 +14,16 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 
 class RegisterAPIView(APIView):
+    @extend_schema(
+        summary="User Registration",
+        description="Register user",
+        request=RegisterSerializer,
+        responses={
+            200: OpenApiParameter(name="Tokens", description="JWT access token and refresh tokens"),
+            400: OpenApiParameter(name="Errors", description="Invalid credentials")
+        },
+        tags=["User Authentication"]
+    )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -63,8 +73,13 @@ class LoginAPIView(APIView):
 
 
 class DoctorAPIView(APIView):
-    throttle_classes = (AnonRateThrottle, UserRateThrottle)
     permission_classes = [IsAuthenticated]
+    throttle_classes = (AnonRateThrottle, UserRateThrottle)
+
+    @extend_schema(
+        summary="Doctors Information",
+        description="Doctor API View",
+        tags=["Doctor"])
 
     def get(self, request, pk=None):
         if pk:
@@ -90,6 +105,11 @@ class DoctorSearchList(generics.ListAPIView):
 
 class NewsAPIView(APIView):
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
+
+    @extend_schema(
+        summary="News Information",
+        description="News API View",
+        tags=["News"])
 
     def get(self, request, pk=None):
         if pk:
