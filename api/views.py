@@ -3,7 +3,7 @@ from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from api.models import Doctor, News, User
-from api.serializers import DoctorSerializer, NewsSerializer, RegisterSerializer, LoginSerializer
+from api.serializers import DoctorSerializer, NewsSerializer, RegisterSerializer, LoginSerializer, DoctorUpdateSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -41,7 +41,6 @@ class RegisterAPIView(APIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class LoginAPIView(APIView):
     @extend_schema(
         summary="User Login",
@@ -72,7 +71,6 @@ class LoginAPIView(APIView):
             else:
                 return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-
 class DoctorAPIView(APIView):
     permission_classes = [IsAuthenticated]
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
@@ -87,9 +85,19 @@ class DoctorAPIView(APIView):
         return Response(serializer.data)
 
 class DoctorUpdateAPIView(APIView):
+    @extend_schema(
+        summary="Doctor Update API View",
+        description="Doctor Update Data",
+        request=DoctorUpdateSerializer,
+        responses={
+            200: OpenApiParameter(name="Doctor Update", description="Doctor Update APi View data"),
+            400: OpenApiParameter(name="Errors", description="Invalid credentials")
+        },
+        tags=["Doctor"]
+    )
     def put(self, request, pk):
         doctor = get_object_or_404(Doctor, pk=pk)
-        serializer = DoctorSerializer(doctor, data=request.data, partial=True)
+        serializer = DoctorUpdateSerializer(doctor, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
