@@ -95,14 +95,6 @@ class DoctorAPIView(APIView):
             serializer = DoctorSerializer(doctor, many=True)
             return Response(serializer.data)
 
-
-class DoctorSearchList(generics.ListAPIView):
-    serializer_class = DoctorSerializer
-    queryset = Doctor.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['location', 'clinic_name']
-    filterset_fields = ['experience', 'rating_percentage', 'location', 'clinic_name']
-
     def put(self, request, pk):
         doctor = get_object_or_404(Doctor, pk=pk)
         serializer = DoctorSerializer(doctor, data=request.data)
@@ -119,6 +111,14 @@ class DoctorSearchList(generics.ListAPIView):
 
         doctor.delete()
         return Response({'message': 'Doctor has been deleted successfully'}, status=status.HTTP_200_OK)
+
+
+class DoctorSearchList(generics.ListAPIView):
+    serializer_class = DoctorSerializer
+    queryset = Doctor.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['location', 'clinic_name']
+    filterset_fields = ['experience', 'rating_percentage', 'location', 'clinic_name']
 
 
 class NewsAPIView(APIView):
