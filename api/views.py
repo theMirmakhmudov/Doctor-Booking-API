@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
@@ -101,6 +102,23 @@ class DoctorSearchList(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['location', 'clinic_name']
     filterset_fields = ['experience', 'rating_percentage', 'location', 'clinic_name']
+
+    def put(self, request, pk):
+        doctor = get_object_or_404(Doctor, pk=pk)
+        serializer = DoctorSerializer(doctor, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        try:
+            doctor = Doctor.objects.get(pk=pk)
+        except Doctor.DoesNotExist:
+            return Response({'error': 'Doctor does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        doctor.delete()
+        return Response({'message': 'Doctor has been deleted successfully'}, status=status.HTTP_200_OK)
 
 
 class NewsAPIView(APIView):

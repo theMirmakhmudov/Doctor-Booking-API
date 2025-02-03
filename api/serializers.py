@@ -2,10 +2,12 @@ from rest_framework import serializers
 from .models import Doctor, User, News
 from root import settings
 
+
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'email', 'password', 'role', 'first_name', 'last_name']
+
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -28,12 +30,31 @@ class UserSerializer(serializers.ModelSerializer):
 
 class DoctorSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+
     class Meta:
         model = Doctor
-        fields = ['user','specialization','experience','location','clinic_name','consultation_fee','is_consultation_free','availability_today']
+        fields = ['user', 'specialization', 'experience', 'location', 'clinic_name', 'consultation_fee',
+                  'is_consultation_free', 'availability_today']
+
+        def update(self, instance, validated_data):
+            user_data = validated_data.pop('user', None)
+
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+            instance.save()
+
+            if user_data:
+                user_instance = instance.user
+                for attr, value in user_data.items():
+                    setattr(user_instance, attr, value)
+                user_instance.save()
+
+            return instance
+
 
 class NewsSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+
     class Meta:
         model = News
         fields = ['user', 'user', 'title', 'image', 'created_at']
