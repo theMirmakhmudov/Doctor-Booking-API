@@ -3,7 +3,8 @@ from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from api.models import Doctor, News, User
-from api.serializers import DoctorSerializer, NewsSerializer, RegisterSerializer, LoginSerializer, DoctorUpdateSerializer
+from api.serializers import DoctorSerializer, NewsSerializer, RegisterSerializer, LoginSerializer, \
+    DoctorUpdateSerializer, UserUpdateSerializer, UserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,6 +13,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class RegisterAPIView(APIView):
@@ -40,6 +42,7 @@ class RegisterAPIView(APIView):
                 }, status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LoginAPIView(APIView):
     @extend_schema(
@@ -71,6 +74,22 @@ class LoginAPIView(APIView):
             else:
                 return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
+
+class UserUpdateAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    @extend_schema(
+        request=UserUpdateSerializer,
+        responses={200: "User updated successfully"}
+    )
+    def put(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        serializer = UserUpdateSerializer(instance=user, data=request.data, partial=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "User updated successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class DoctorAPIView(APIView):
     permission_classes = [IsAuthenticated]
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
@@ -83,6 +102,7 @@ class DoctorAPIView(APIView):
         doctor = Doctor.objects.all()
         serializer = DoctorSerializer(doctor, many=True)
         return Response(serializer.data)
+
 
 class DoctorUpdateAPIView(APIView):
     @extend_schema(
@@ -103,12 +123,12 @@ class DoctorUpdateAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class DoctorDeleteAPIView(APIView):
     def delete(self, request, pk):
         doctor = get_object_or_404(Doctor, pk=pk)
         doctor.delete()
         return Response({'message': 'Doctor has been deleted successfully'}, status=status.HTTP_200_OK)
-
 
 
 class DoctorDetailsAPIView(APIView):
@@ -148,3 +168,13 @@ class NewsAPIView(APIView):
             news = News.objects.all()
             serializer = NewsSerializer(news, many=True)
             return Response(serializer.data)
+
+
+class UsersList(APIView):
+    def get(self, request):
+        try:
+            user = User.objects.all()
+            serializer = UserSerializer(user, many=True)
+            return Response(serializer.data)
+        except:
+            return Response({'error': 'News does not exist'}, status=status.HTTP_404_NOT_FOUND)
