@@ -81,36 +81,36 @@ class DoctorAPIView(APIView):
         summary="Doctors Information",
         description="Doctor API View",
         tags=["Doctor"])
+    def get(self, request):
+        doctor = Doctor.objects.all()
+        serializer = DoctorSerializer(doctor, many=True)
+        return Response(serializer.data)
 
-    def get(self, request, pk=None):
-        if pk:
-            try:
-                doctor = Doctor.objects.get(pk=pk)
-                serializer = DoctorSerializer(doctor)
-                return Response(serializer.data)
-            except:
-                return Response({'error': 'Doctor does not exist'}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            doctor = Doctor.objects.all()
-            serializer = DoctorSerializer(doctor, many=True)
-            return Response(serializer.data)
-
+class DoctorUpdateAPIView(APIView):
     def put(self, request, pk):
         doctor = get_object_or_404(Doctor, pk=pk)
-        serializer = DoctorSerializer(doctor, data=request.data)
+        serializer = DoctorSerializer(doctor, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class DoctorDeleteAPIView(APIView):
     def delete(self, request, pk):
-        try:
-            doctor = Doctor.objects.get(pk=pk)
-        except Doctor.DoesNotExist:
-            return Response({'error': 'Doctor does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
+        doctor = get_object_or_404(Doctor, pk=pk)
         doctor.delete()
         return Response({'message': 'Doctor has been deleted successfully'}, status=status.HTTP_200_OK)
+
+
+
+class DoctorDetailsAPIView(APIView):
+    def get(self, request, pk):
+        try:
+            doctor = Doctor.objects.get(pk=pk)
+            serializer = DoctorSerializer(doctor)
+            return Response(serializer.data)
+        except:
+            return Response({'error': 'Doctor does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class DoctorSearchList(generics.ListAPIView):
@@ -128,7 +128,6 @@ class NewsAPIView(APIView):
         summary="News Information",
         description="News API View",
         tags=["News"])
-
     def get(self, request, pk=None):
         if pk:
             try:
