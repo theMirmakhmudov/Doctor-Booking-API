@@ -77,9 +77,16 @@ class LoginAPIView(APIView):
 
 class UserUpdateAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
+
     @extend_schema(
+        summary="User Registration",
+        description="Register user",
         request=UserUpdateSerializer,
-        responses={200: "User updated successfully"}
+        responses={
+            200: OpenApiParameter(name="User Updated", description="User data updated"),
+            400: OpenApiParameter(name="Errors", description="Invalid credentials")
+        },
+        tags=["User Update"]
     )
     def put(self, request, pk):
         user = get_object_or_404(User, pk=pk)
