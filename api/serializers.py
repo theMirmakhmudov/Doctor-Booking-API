@@ -30,6 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField()
+
     class Meta:
         model = User
         fields = ["first_name", "last_name", "avatar"]

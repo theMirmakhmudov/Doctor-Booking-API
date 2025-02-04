@@ -8,6 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class DoctorModelTest(APITestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
@@ -67,6 +68,7 @@ class DoctorModelTest(APITestCase):
         self.assertEqual(response.data['is_consultation_free'], False)
         self.assertEqual(response.data['availability_today'], True)
         logger.info("\nTest 3 (Doctors-details) ✅\n")
+
 
 class NewsModelTestCase(APITestCase):
     def setUp(self):

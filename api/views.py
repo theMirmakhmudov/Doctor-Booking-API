@@ -3,8 +3,15 @@ from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from api.models import Doctor, News, User
-from api.serializers import DoctorSerializer, NewsSerializer, RegisterSerializer, LoginSerializer, \
-    DoctorUpdateSerializer, UserUpdateSerializer, UserSerializer
+from api.serializers import (
+    RegisterSerializer,
+    LoginSerializer,
+    DoctorSerializer,
+    DoctorUpdateSerializer,
+    NewsSerializer,
+    UserUpdateSerializer,
+    UserSerializer
+)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -75,6 +82,16 @@ class LoginAPIView(APIView):
                 return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+class UsersList(APIView):
+    def get(self, request):
+        try:
+            user = User.objects.all()
+            serializer = UserSerializer(user, many=True)
+            return Response(serializer.data)
+        except:
+            return Response({'error': 'News does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
 class UserUpdateAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
@@ -111,6 +128,24 @@ class DoctorAPIView(APIView):
         return Response(serializer.data)
 
 
+class DoctorDetailsAPIView(APIView):
+    def get(self, request, pk):
+        try:
+            doctor = Doctor.objects.get(pk=pk)
+            serializer = DoctorSerializer(doctor)
+            return Response(serializer.data)
+        except:
+            return Response({'error': 'Doctor does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class DoctorSearchList(generics.ListAPIView):
+    serializer_class = DoctorSerializer
+    queryset = Doctor.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['location', 'clinic_name']
+    filterset_fields = ['experience', 'rating_percentage', 'location', 'clinic_name']
+
+
 class DoctorUpdateAPIView(APIView):
     @extend_schema(
         summary="Doctor Update API View",
@@ -138,24 +173,6 @@ class DoctorDeleteAPIView(APIView):
         return Response({'message': 'Doctor has been deleted successfully'}, status=status.HTTP_200_OK)
 
 
-class DoctorDetailsAPIView(APIView):
-    def get(self, request, pk):
-        try:
-            doctor = Doctor.objects.get(pk=pk)
-            serializer = DoctorSerializer(doctor)
-            return Response(serializer.data)
-        except:
-            return Response({'error': 'Doctor does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
-
-class DoctorSearchList(generics.ListAPIView):
-    serializer_class = DoctorSerializer
-    queryset = Doctor.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['location', 'clinic_name']
-    filterset_fields = ['experience', 'rating_percentage', 'location', 'clinic_name']
-
-
 class NewsAPIView(APIView):
     throttle_classes = (AnonRateThrottle, UserRateThrottle)
 
@@ -163,25 +180,20 @@ class NewsAPIView(APIView):
         summary="News Information",
         description="News API View",
         tags=["News"])
-    def get(self, request, pk=None):
-        if pk:
-            try:
-                news = News.objects.get(pk=pk)
-                serializer = NewsSerializer(news)
-                return Response(serializer.data)
-            except:
-                return Response({'error': 'News does not exist'}, status=status.HTTP_404_NOT_FOUND)
-        else:
+    def get(self, request):
+        try:
             news = News.objects.all()
             serializer = NewsSerializer(news, many=True)
             return Response(serializer.data)
+        except:
+            return Response({'error': 'News does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class UsersList(APIView):
-    def get(self, request):
+class NewsDetailsAPIView(APIView):
+    def get(self, request, pk):
         try:
-            user = User.objects.all()
-            serializer = UserSerializer(user, many=True)
+            news = News.objects.get(pk=pk)
+            serializer = NewsSerializer(news)
             return Response(serializer.data)
         except:
             return Response({'error': 'News does not exist'}, status=status.HTTP_404_NOT_FOUND)
