@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Doctor, User, News
+from .models import Doctor, User, News, Booking
 from root import settings
 
 
@@ -81,3 +81,9 @@ class NewsSerializer(serializers.ModelSerializer):
         else:
             representation['image'] = None
         return representation
+
+class BookingSerializer(serializers.ModelSerializer):
+    doctor = DoctorSerializer()
+    class Meta:
+        model = Booking
+        fields = ['id', 'doctor', 'date_time', 'status']

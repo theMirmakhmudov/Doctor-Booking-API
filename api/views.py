@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
-from api.models import Doctor, News, User
+from api.models import Doctor, News, User, Booking
 from api.serializers import (
     RegisterSerializer,
     LoginSerializer,
@@ -10,7 +10,8 @@ from api.serializers import (
     DoctorUpdateSerializer,
     NewsSerializer,
     UserUpdateSerializer,
-    UserSerializer
+    UserSerializer,
+    BookingSerializer
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -197,3 +198,10 @@ class NewsDetailsAPIView(APIView):
             return Response(serializer.data)
         except:
             return Response({'error': 'News does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class BookingAPIView(APIView):
+    def get(self, request):
+        booking = Booking.objects.all()
+        serializer = BookingSerializer(booking, many=True)
+        return Response(serializer.data)
