@@ -11,7 +11,10 @@ from api.views import (
     NewsDetailsAPIView,
     UserUpdateAPIView,
     UsersList,
-    BookingAPIView
+    BookingAPIView,
+    AvailableBookingAPIView,
+    RejectedBookingAPIView,
+    CompletedBookingAPIView
 
 )
 
@@ -23,6 +26,9 @@ urlpatterns = [
     path('doctor/update/<int:pk>', DoctorUpdateAPIView.as_view(), name='doctor-update'),
     path('doctor/delete/<int:pk>', DoctorDeleteAPIView.as_view(), name='doctor-delete'),
     path('booking', BookingAPIView.as_view(), name='booking-list'),
+    path('booking/available', AvailableBookingAPIView.as_view(), name='available-doctor'),
+    path('booking/rejected', RejectedBookingAPIView.as_view(), name='rejected-doctor'),
+    path('booking/completed', CompletedBookingAPIView.as_view(), name='completed-doctor'),
     path('user/update/<int:pk>', UserUpdateAPIView.as_view(), name='user-update'),
     path('users', UsersList.as_view(), name='users-list'),
     path('search', DoctorSearchList.as_view(), name='search'),

@@ -84,6 +84,8 @@ class LoginAPIView(APIView):
 
 
 class UsersList(APIView):
+    @extend_schema(
+        tags=["Users"])
     def get(self, request):
         try:
             user = User.objects.all()
@@ -104,7 +106,7 @@ class UserUpdateAPIView(APIView):
             200: OpenApiParameter(name="User Updated", description="User data updated"),
             400: OpenApiParameter(name="Errors", description="Invalid credentials")
         },
-        tags=["User Update"]
+        tags=["Users"]
     )
     def put(self, request, pk):
         user = get_object_or_404(User, pk=pk)
@@ -130,6 +132,10 @@ class DoctorAPIView(APIView):
 
 
 class DoctorDetailsAPIView(APIView):
+    @extend_schema(
+        summary="Doctors Information",
+        description="Doctor API View",
+        tags=["Doctor"])
     def get(self, request, pk):
         try:
             doctor = Doctor.objects.get(pk=pk)
@@ -168,6 +174,10 @@ class DoctorUpdateAPIView(APIView):
 
 
 class DoctorDeleteAPIView(APIView):
+    @extend_schema(
+        summary="Doctor Delete",
+        description="Doctor API Delete",
+        tags=["Doctor"])
     def delete(self, request, pk):
         doctor = get_object_or_404(Doctor, pk=pk)
         doctor.delete()
@@ -191,6 +201,10 @@ class NewsAPIView(APIView):
 
 
 class NewsDetailsAPIView(APIView):
+    @extend_schema(
+        summary="News Information",
+        description="News API View",
+        tags=["News"])
     def get(self, request, pk):
         try:
             news = News.objects.get(pk=pk)
@@ -201,7 +215,68 @@ class NewsDetailsAPIView(APIView):
 
 
 class BookingAPIView(APIView):
+    @extend_schema(
+        responses={
+            200: OpenApiParameter(name="Details", description="Booking details information"),
+            400: OpenApiParameter(name="Errors", description="Invalid credentials")
+        },
+        tags=["Booking"]
+    )
     def get(self, request):
-        booking = Booking.objects.all()
-        serializer = BookingSerializer(booking, many=True)
-        return Response(serializer.data)
+        try:
+            booking = Booking.objects.all()
+            serializer = BookingSerializer(booking, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class AvailableBookingAPIView(APIView):
+    @extend_schema(
+        responses={
+            200: OpenApiParameter(name="Details", description="Booking details information"),
+            400: OpenApiParameter(name="Errors", description="Invalid credentials")
+        },
+        tags=["Booking"]
+    )
+    def get(self, request):
+        try:
+            bookings = Booking.objects.filter(status='available')
+            serializer = BookingSerializer(bookings, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class RejectedBookingAPIView(APIView):
+    @extend_schema(
+        responses={
+            200: OpenApiParameter(name="Details", description="Booking details information"),
+            400: OpenApiParameter(name="Errors", description="Invalid credentials")
+        },
+        tags=["Booking"]
+    )
+    def get(self, request):
+        try:
+            bookings = Booking.objects.filter(status='rejected')
+            serializer = BookingSerializer(bookings, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class CompletedBookingAPIView(APIView):
+    @extend_schema(
+        responses={
+            200: OpenApiParameter(name="Details", description="Booking details information"),
+            400: OpenApiParameter(name="Errors", description="Invalid credentials")
+        },
+        tags=["Booking"]
+    )
+    def get(self, request):
+        try:
+            bookings = Booking.objects.filter(status='completed')
+            serializer = BookingSerializer(bookings, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)

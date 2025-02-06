@@ -208,6 +208,7 @@ JAZZMIN_SETTINGS = {
     'icons': {
         'api.Doctor': 'fa fa-user-doctor',  # Doctor modeliga ikona qo'shish
         'api.News': 'fa fa-envelope',  # Images Modeliga ikonga qo'shish
+        'api.Booking': 'fa fa-calendar-days', # Booking modeliga ikona qo'shish'
         'api.user': 'fas fa-user',  # User modeliga ikona qo'shish
         'api.group': 'fas fa-users',  # Group modeliga ikona qo'shish
     },
