@@ -84,5 +84,7 @@ class NewsSerializer(serializers.ModelSerializer):
 
 class DateSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    doctor = DoctorSerializer()
     class Meta:
         model = Date
+        fields = ['id','user','doctor', 'date', 'time', 'status','created_at']

@@ -213,23 +213,33 @@ class NewsDetailsAPIView(APIView):
         except:
             return Response({'error': 'News does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+class DoctorDateAPIView(APIView):
+    def get(self, request):
+        try:
+            dates = Date.objects.filter(status='pending')
+            serializer = DateSerializer(dates, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': 'Date does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
 
 class BookingAPIView(APIView):
-    permission_classes = [IsAuthenticated,]
-    @extend_schema(
-        responses={
-            200: OpenApiParameter(name="Details", description="Booking details information"),
-            400: OpenApiParameter(name="Errors", description="Invalid credentials")
-        },
-        tags=["Booking"]
-    )
-    def get(self, request, pk):
-        date = Date.objects.filter(pk=pk, status='pending', user=request.user).update(status="confirmed")
-        try:
-            date = Date.objects.get(pk=pk, status="confirmed")
-            return Response(date, status=status.HTTP_200_OK)
+    permission_classes = [IsAuthenticated, ]
 
-        except:
-            return Response({'error': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    def get(self, request, pk):
+        user = request.user
+        try:
+            available_date = Date.objects.get(pk=pk, status='pending')
+            available_date.status = 'confirmed'
+            available_date.user = user
+            available_date.save()
+
+        except Date.DoesNotExist:
+            return Response({'detail': 'The selected date and time are not available.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = DateSerializer(available_date)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
