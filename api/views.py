@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
-from api.models import Doctor, News, User, Booking
+from api.models import Doctor, News, User, Date
 from api.serializers import (
     RegisterSerializer,
     LoginSerializer,
@@ -11,7 +11,7 @@ from api.serializers import (
     NewsSerializer,
     UserUpdateSerializer,
     UserSerializer,
-    BookingSerializer
+    DateSerializer
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -215,6 +215,7 @@ class NewsDetailsAPIView(APIView):
 
 
 class BookingAPIView(APIView):
+    permission_classes = [IsAuthenticated,]
     @extend_schema(
         responses={
             200: OpenApiParameter(name="Details", description="Booking details information"),
@@ -222,61 +223,13 @@ class BookingAPIView(APIView):
         },
         tags=["Booking"]
     )
-    def get(self, request):
+    def get(self, request, pk):
+        date = Date.objects.filter(pk=pk, status='pending', user=request.user).update(status="confirmed")
         try:
-            booking = Booking.objects.all()
-            serializer = BookingSerializer(booking, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            date = Date.objects.get(pk=pk, status="confirmed")
+            return Response(date, status=status.HTTP_200_OK)
+
         except:
             return Response({'error': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class AvailableBookingAPIView(APIView):
-    @extend_schema(
-        responses={
-            200: OpenApiParameter(name="Details", description="Booking details information"),
-            400: OpenApiParameter(name="Errors", description="Invalid credentials")
-        },
-        tags=["Booking"]
-    )
-    def get(self, request):
-        try:
-            bookings = Booking.objects.filter(status='available')
-            serializer = BookingSerializer(bookings, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
-            return Response({'error': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
-
-class RejectedBookingAPIView(APIView):
-    @extend_schema(
-        responses={
-            200: OpenApiParameter(name="Details", description="Booking details information"),
-            400: OpenApiParameter(name="Errors", description="Invalid credentials")
-        },
-        tags=["Booking"]
-    )
-    def get(self, request):
-        try:
-            bookings = Booking.objects.filter(status='rejected')
-            serializer = BookingSerializer(bookings, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
-            return Response({'error': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
-
-class CompletedBookingAPIView(APIView):
-    @extend_schema(
-        responses={
-            200: OpenApiParameter(name="Details", description="Booking details information"),
-            400: OpenApiParameter(name="Errors", description="Invalid credentials")
-        },
-        tags=["Booking"]
-    )
-    def get(self, request):
-        try:
-            bookings = Booking.objects.filter(status='completed')
-            serializer = BookingSerializer(bookings, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
-            return Response({'error': 'Booking does not exist'}, status=status.HTTP_404_NOT_FOUND)
